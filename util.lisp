@@ -1,6 +1,6 @@
 ;;;; -*- Mode: Lisp; indent-tabs-mode: nil -*-
 ;;;; ==========================================================================
-;;;; Matrix.asd --- Define the system
+;;;; util.lisp --- A set of utility functions
 ;;;;
 ;;;; Copyright (c) 2013, Nikhil Shetty <nikhil.j.shetty@gmail.com>
 ;;;;   All rights reserved.
@@ -30,9 +30,10 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem Matrix
-  :description "Defining the asdf system for Matrix project"
-  :depends-on (cl-opengl)
-  :components ((:file "package")
-               (:file "util" :depends-on ("package"))
-               ))
+
+(in-package: #:vr)
+
+;;; ---------------------------------------------------------------------------
+(defun hostname ()
+  "Gets the host-name using the (machine-instance) command"
+  (machine-instance))

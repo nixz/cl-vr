@@ -62,32 +62,25 @@ stream"
 
 ;;; ---------------------------------------------------------------------------
 (defun repl-server (&key (port 9999))
-  "This is the start of the environment. The environment comes up at
-defaut port 9999. It waits for connections and opens up repl
-connections and waits for various inputs."
+  "The funtion starts a repl-server on a socket. The server is essentially a
+connection server which brings up the repl on a new process. Once created one
+can send commands over the socket"
   (let (socket (count 0))
     (unwind-protect
          (progn
-           (let ((socket (make-instance 'inet-socket
-                                       :type :stream
-                                       :protocol :tcp)))
-             (setf (sockopt-reuse-address socket) t)
-             (socket-bind socket (nslookup (get-host-name)) port)
-             (socket-listen socket 5)
-           (loop
-              (let (session pid)
-                (setq session (socket-accept socket))
-                (setq pid (sb-posix:fork))
-                (cond
-                  ((zerop pid) (progn
-                                 (socket-close socket)
-                                 (repl  (socket-make-stream session
-                                                            :input t :output t
-                                                            :element-type 'character
-                                                            :buffering :none))))
-                  ((plusp pid) (progn
-                                 (socket-close session)
-                                 (setf count (+ count 1))
-                                 (format t "~&Count = ~a ~%" count)))
-                  (t           (error "Something went wrong while forking."))))))
-      (quit))))
+           (let ((socket (usocket:socket-listen (nslookup (hostname)) 9999
+                                                :reuseaddress t)))
+             (loop
+                (let (cstream pid)
+                  (setq cstream (usocket:socket-accept socket :element-type 'character))
+                  (setq pid (sb-posix:fork))
+                  (cond
+                    ((zerop pid) (progn
+                                   (usocket:socket-close socket)
+                                   (repl cstream)))
+                    ((plusp pid) (progn
+                                   (close cstream)
+                                   (setf count (+ count 1))
+                                   (format t "~&Count = ~a ~%" count)))
+                    (t           (error "Something went wrong while forking."))))))
+           (quit))))

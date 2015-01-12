@@ -42,21 +42,22 @@
       (sb-bsd-sockets:host-ent-address (sb-bsd-sockets:get-host-by-name hostname))
       nil))
 
+;;; ---------------------------------------------------------------------------
 (defun hostname ()
   "Gets the host-name using the (machine-instance) command"
   (machine-instance))
 
 ;;; ---------------------------------------------------------------------------
 (defun repl (stream)
+  "We are defining a basic repl here which works on a stream. It basically
+liks the standard input and output to this steram and initiates a repl on this
+stream"
   (unwind-protect
        (progn
          (setq *standard-input* stream
                *standard-output* stream)
-         (loop
-            ;;(print (handler-case (write-to-string (eval (read)))
-            (print (handler-case (eval (read))                     
-                     (error (condition) (list 'error condition))))))
-    ;;         (loop (print (eval (read stream)) stream))
+         (loop (print (handler-case (eval (read))                     
+                        (error (condition) (list 'error condition))))))
     (cl-user::quit)))
 
 ;;; ---------------------------------------------------------------------------

@@ -68,7 +68,7 @@ can send commands over the socket"
   (let (socket (count 0))
     (unwind-protect
          (progn
-           (let ((socket (usocket:socket-listen (nslookup (hostname)) 9999
+           (let ((socket (usocket:socket-listen (nslookup (hostname)) port
                                                 :reuseaddress t)))
              (loop
                 (let (cstream pid)

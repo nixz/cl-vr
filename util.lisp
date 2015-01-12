@@ -37,3 +37,48 @@
 (defun hostname ()
   "Gets the host-name using the (machine-instance) command"
   (machine-instance))
+
+;;; ---------------------------------------------------------------------------
+(defun repl (stream)
+  (unwind-protect
+       (progn
+         (setq *standard-input* stream
+               *standard-output* stream)
+         (loop
+            ;;(print (handler-case (write-to-string (eval (read)))
+            (print (handler-case (eval (read))                     
+                     (error (condition) (list 'error condition))))))
+    ;;         (loop (print (eval (read stream)) stream))
+    (cl-user::quit)))
+
+;;; ---------------------------------------------------------------------------
+(defun repl-server (&key (port 9999))
+  "This is the start of the environment. The environment comes up at
+defaut port 9999. It waits for connections and opens up repl
+connections and waits for various inputs."
+  (let (socket (count 0))
+    (unwind-protect
+         (progn
+           (let ((socket (make-instance 'inet-socket
+                                       :type :stream
+                                       :protocol :tcp)))
+             (setf (sockopt-reuse-address socket) t)
+             (socket-bind socket (nslookup (get-host-name)) port)
+             (socket-listen socket 5)
+           (loop
+              (let (session pid)
+                (setq session (socket-accept socket))
+                (setq pid (sb-posix:fork))
+                (cond
+                  ((zerop pid) (progn
+                                 (socket-close socket)
+                                 (repl  (socket-make-stream session
+                                                            :input t :output t
+                                                            :element-type 'character
+                                                            :buffering :none))))
+                  ((plusp pid) (progn
+                                 (socket-close session)
+                                 (setf count (+ count 1))
+                                 (format t "~&Count = ~a ~%" count)))
+                  (t           (error "Something went wrong while forking."))))))
+      (quit))))

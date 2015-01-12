@@ -34,6 +34,14 @@
 (in-package: #:vr)
 
 ;;; ---------------------------------------------------------------------------
+(defun nslookup (hostname)
+  "Performs a DNS look up for HOSTNAME and returns the address as a
+   four element array, suitable for socket-connect.  If HOSTNAME is
+   not found, a host-not-found-error condition is thrown."
+  (if hostname
+      (sb-bsd-sockets:host-ent-address (sb-bsd-sockets:get-host-by-name hostname))
+      nil))
+
 (defun hostname ()
   "Gets the host-name using the (machine-instance) command"
   (machine-instance))

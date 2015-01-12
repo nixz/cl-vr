@@ -1,7 +1,7 @@
-# Matrix
+# cl-vr
 Ubiquitous VR in common lisp
 
-Matrix is a Virtual Reality (VR) System. Virtual Reality is typically about fooling your senses into believing a false sense of reality (artificial reality). The current system aims at primarily fooling the eyes (maybe in the future it will extend to other things).
+cl-vr is a Virtual Reality (VR) System. Virtual Reality is typically about fooling your senses into believing a false sense of reality (artificial reality). The current system aims at primarily fooling the eyes (maybe in the future it will extend to other things).
 
  The technical goal of this system is to be able an analog of a windowing system to VR environents. We want to provide application writers with the ability to easily write and deploy their applications semlessly in environents like the CAVE, Tiled-Walls, HMD (Occulus Rift) etc. We understand that not everybody has access display technologies and so the system will also serve as a desktop/tablet based windowing system as well.
  

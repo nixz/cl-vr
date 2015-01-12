@@ -1,6 +1,6 @@
 ;;;; -*- Mode: Lisp; indent-tabs-mode: nil -*-
 ;;;; ==========================================================================
-;;;; Matrix.asd --- Define the system
+;;;; cl-vr.asd --- Define the system
 ;;;;
 ;;;; Copyright (c) 2013, Nikhil Shetty <nikhil.j.shetty@gmail.com>
 ;;;;   All rights reserved.
@@ -30,10 +30,9 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem Matrix
-  :description "Defining the asdf system for Matrix project"
-  :depends-on (#:cl
-               #:cl-opengl
+(defsystem cl-vr
+  :description "Defining the asdf system for cl-vr project"
+  :depends-on (#:cl-opengl
                #:sb-bsd-sockets
                #:usocket
                #:sb-posix)

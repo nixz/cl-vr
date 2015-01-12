@@ -33,10 +33,8 @@
 
 (in-package #:cl-user)
 
-(defpackage #:matrix
-  (:nicknames #:shell #:vr #:3d)
-  (:use #:cl
-        #:cepl
-        #:cl-glfw3)
+(defpackage #:cl-vr
+  (:nicknames #:vr #:3d)
+  (:use #:cl)
   (:export :load
            :quit))

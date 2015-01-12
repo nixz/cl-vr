@@ -31,7 +31,7 @@
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
 
-(in-package: #:vr)
+(in-package #:cl-vr)
 
 ;;; ---------------------------------------------------------------------------
 (defun nslookup (hostname)
@@ -83,4 +83,4 @@ can send commands over the socket"
                                    (setf count (+ count 1))
                                    (format t "~&Count = ~a ~%" count)))
                     (t           (error "Something went wrong while forking."))))))
-           (quit))))
+           (quit)))))

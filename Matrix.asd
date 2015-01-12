@@ -32,7 +32,11 @@
 ;;;; ==========================================================================
 (defsystem Matrix
   :description "Defining the asdf system for Matrix project"
-  :depends-on (cl-opengl)
+  :depends-on (#:cl
+               #:cl-opengl
+               #:sb-bsd-sockets
+               #:usocket
+               #:sb-posix)
   :components ((:file "package")
                (:file "util" :depends-on ("package"))
                ))

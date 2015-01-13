@@ -86,6 +86,12 @@ can send commands over the socket"
            (quit)))))
 
 ;;; ---------------------------------------------------------------------------
+(defun run-daemon () 
+  "This functions runs the daemon as a seperate thread in the background if
+  run in swank else it runs it in the main thread"
+  (repl-server))
+
+;;; ---------------------------------------------------------------------------
 (defun make-daemon (&key (path (user-homedir-pathname)))
   "Makes the vr-daemon in the specified path. If no path is specified then the
   user-home-directory is used as the default path"

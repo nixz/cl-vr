@@ -37,4 +37,4 @@
   (:nicknames #:vr #:3d)
   (:use #:cl)
   (:export :make-daemon
-           :repl-server))
+           :run-daemon))

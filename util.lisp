@@ -72,7 +72,9 @@ can send commands over the socket"
                                                 :reuseaddress t)))
              (loop
                 (let (cstream pid)
-                  (setq cstream (usocket:socket-accept socket :element-type 'character))
+                  (setq cstream (usocket:socket-stream 
+                                 (usocket:socket-accept socket 
+                                                        :element-type 'character)))
                   (setq pid (sb-posix:fork))
                   (cond
                     ((zerop pid) (progn

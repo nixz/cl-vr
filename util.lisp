@@ -84,3 +84,15 @@ can send commands over the socket"
                                    (format t "~&Count = ~a ~%" count)))
                     (t           (error "Something went wrong while forking."))))))
            (quit)))))
+
+;;; ---------------------------------------------------------------------------
+(defun make-daemon (&key (path (user-homedir-pathname)))
+  "Makes the vr-daemon in the specified path. If no path is specified then the
+  user-home-directory is used as the default path"
+  (let ((file-name
+         (namestring (cl-fad:merge-pathnames-as-file (pathname path)
+                                                     #P"cl-vr-daemon"))))
+    #+(and :swank :sbcl)
+    (trivial-dump-core::sbcl-save-slime-and-die file-name #'repl-server)
+    #-swank
+    (trivial-dump-core:save-executable file-name #'repl-server)))

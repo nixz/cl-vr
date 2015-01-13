@@ -35,7 +35,8 @@
   :depends-on (#:cl-opengl
                #:sb-bsd-sockets
                #:usocket
-               #:sb-posix)
+               #:sb-posix
+               #:trivial-dump-core
+               #:cl-fad)
   :components ((:file "package")
-               (:file "util" :depends-on ("package"))
-               ))
+               (:file "util" :depends-on ("package"))))

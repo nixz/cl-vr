@@ -36,5 +36,4 @@
 (defpackage #:cl-vr
   (:nicknames #:vr #:3d)
   (:use #:cl)
-  (:export :load
-           :quit))
+  (:export :make-daemon))

@@ -48,17 +48,51 @@
   (machine-instance))
 
 ;;; ---------------------------------------------------------------------------
+(defmacro handling-errors (&body body)
+  `(handler-case (progn ,@body)
+     (simple-condition (err) 
+       (format *error-output* "~&~A: ~%" (class-name (class-of err)))
+       (apply (function format) *error-output*
+              (simple-condition-format-control   err)
+              (simple-condition-format-arguments err))
+       (format *error-output* "~&")
+       (finish-output))
+     (condition (err) 
+       (format *error-output* "~&~A: ~%  ~S~%"
+               (class-name (class-of err)) err)
+       (finish-output))))
+
+;;; ---------------------------------------------------------------------------
 (defun repl (stream)
-  "We are defining a basic repl here which works on a stream. It basically
-liks the standard input and output to this steram and initiates a repl on this
-stream"
-  (unwind-protect
-       (progn
-         (setq *standard-input* stream
-               *standard-output* stream)
-         (loop (print (handler-case (eval (read))                     
-                        (error (condition) (list 'error condition))))))
-    (cl-user::quit)))
+  (setq *standard-input* stream
+           *standard-output* stream
+           *error-output* stream)
+  (do ((+eof+ (gensym))
+       (hist 1 (1+ hist)))
+      (nil)
+    (format t "~%~A[~D]> " (package-name *package*) hist)
+    (handling-errors
+     (setf +++ ++   ++ +   + -   - (read *standard-input* nil +eof+))
+     (when (or (eq - +eof+)
+               (member - '((quit)(exit)(continue)) :test (function equal)))
+       (return-from repl))
+     (setf /// //   // /   / (multiple-value-list (eval -)))
+     (setf *** **   ** *   * (first /))
+     (format t "~& --> ~{~S~^ ;~%     ~}~%" /)
+     (finish-output))))
+
+;;; ---------------------------------------------------------------------------
+;; (defun repl (stream)
+;;   "We are defining a basic repl here which works on a stream. It basically
+;; liks the standard input and output to this steram and initiates a repl on this
+;; stream"
+;;   (unwind-protect
+;;        (progn
+;;          (setq *standard-input* stream
+;;                *standard-output* stream)
+;;          (loop (print (handler-case (eval (read))                     
+;;                         (error (condition) (list 'error condition))))))
+;;     (cl-user::quit)))
 
 ;;; ---------------------------------------------------------------------------
 (defun repl-server (&key (port 9999))

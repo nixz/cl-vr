@@ -70,7 +70,6 @@
   (do ((+eof+ (gensym))
        (hist 1 (1+ hist)))
       (nil)
-    (format t "~%~A[~D]> " (package-name *package*) hist)
     (handling-errors
      (setf +++ ++   ++ +   + -   - (read *standard-input* nil +eof+))
      (when (or (eq - +eof+)

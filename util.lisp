@@ -67,8 +67,7 @@
   (setq *standard-input* stream
            *standard-output* stream
            *error-output* stream)
-  (do ((+eof+ (gensym))
-       (hist 1 (1+ hist)))
+  (do ((+eof+ (gensym)))
       (nil)
     (handling-errors
      (setf +++ ++   ++ +   + -   - (read *standard-input* nil +eof+))

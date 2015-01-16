@@ -136,3 +136,10 @@ can send commands over the socket"
     (trivial-dump-core::sbcl-save-slime-and-die file-name #'repl-server)
     #-swank
     (trivial-dump-core:save-executable file-name #'repl-server)))
+
+
+;;; ---------------------------------------------------------------------------
+(defun connection (&key host (port 9999))
+  "This function makes a connection to the client and returns a connection
+  object"
+  (usocket:socket-connect host port))

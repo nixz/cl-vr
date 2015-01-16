@@ -63,21 +63,37 @@
        (finish-output))))
 
 ;;; ---------------------------------------------------------------------------
+;;; ---------------------------------------------------------------------------
 (defun repl (stream)
   (setq *standard-input* stream
            *standard-output* stream
            *error-output* stream)
-  (do ((+eof+ (gensym)))
-      (nil)
-    (handling-errors
-     (setf +++ ++   ++ +   + -   - (read *standard-input* nil +eof+))
-     (when (or (eq - +eof+)
-               (member - '((quit)(exit)(continue)) :test (function equal)))
-       (return-from repl))
-     (setf /// //   // /   / (multiple-value-list (eval -)))
-     (setf *** **   ** *   * (first /))
-     (format t "~&~{~S~^ ;~%     ~}~%" /)
-     (finish-output))))
+  (loop for line = (read-line stream nil)
+       while line do
+       (handling-errors
+        (setf +++ ++   ++ +   + -   - (read-from-string line))
+        (format stream "~A~%" -)
+        (when (member - `((quit) (exit) (continue)) :test (function equal)) 
+          (return-from repl)
+          )
+        (format stream "~A~%" "skipped quit")
+        (setf /// //   // /   / (multiple-value-list (eval -)))
+        (format stream "~A~%" /)
+        (setf *** **   ** *   * (first /))
+        (format stream "~A~%" *)
+        (force-output stream))))
+
+  ;; (do ((+eof+ (gensym)))
+  ;;     (nil)
+  ;;   (handling-errors
+  ;;    (setf +++ ++   ++ +   + -   - (read *standard-input* nil +eof+))
+  ;;    (when (or (eq - +eof+)
+  ;;              (member - '((quit)(exit)(continue)) :test (function equal)))
+  ;;      (return-from repl))
+  ;;    (setf /// //   // /   / (multiple-value-list (eval -)))
+  ;;    (setf *** **   ** *   * (first /))
+  ;;    (format t "~&~{~S~^ ;~%     ~}~%" /)
+  ;;    (finish-output))))
 
 ;;; ---------------------------------------------------------------------------
 ;; (defun repl (stream)

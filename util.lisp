@@ -63,6 +63,16 @@
        (finish-output))))
 
 ;;; ---------------------------------------------------------------------------
+(defun start-rp-listener () 
+  "Start the server."
+  (let ((sock (socket-listen +address+ +port+ 
+			     :backlog +backlog+ :reuseaddress t)))
+    (let ((cstream (socket-stream (socket-accept sock))))
+      (loop for line = (read-line cstream nil)
+	 while line do (progn (format cstream "~A~%" (eval (read-from-string line)))
+			      (force-output cstream)))
+      (close cstream))))
+
 ;;; ---------------------------------------------------------------------------
 (defun repl (stream)
   (setq *standard-input* stream

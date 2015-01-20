@@ -124,27 +124,28 @@
 connection server which brings up the repl on a new process. Once created one
 can send commands over the socket"
   (let (socket)
-    (unwind-protect
-         (progn
-           (let ((socket (usocket:socket-listen (nslookup (hostname)) port
-                                                :reuseaddress t)))
-             (loop
-                (let (cstream pid)
-                  (setq cstream (usocket:socket-stream 
-                                 (usocket:socket-accept socket 
-                                                        :element-type 'character)))
-                  (setq pid (sb-posix:fork))
-                  (cond
-                    ((zerop pid) (progn
-                                   (usocket:socket-close socket)
-                                   (repl cstream)))
-                    ((plusp pid) (progn
-                                   (add-child pid)
-                                   (close cstream)
-                                   (format t "~&Count = ~a ~%" (total-children))
-                                   (wait-for-children)))
-                    (t           (error "Something went wrong while forking."))))))
-           (quit)))))
+    (progn
+      (let ((socket (usocket:socket-listen (nslookup (hostname)) port
+                                           :reuseaddress t)))
+        (loop
+           (let (csocket cstream pid)
+             (setq csocket  (usocket:socket-accept socket 
+                                                   :element-type 'character))
+             (setq cstream (usocket:socket-stream csocket))
+             (setq pid (sb-posix:fork))
+             (cond
+               ((zerop pid) (progn
+                              (usocket:socket-close socket)
+                              (repl cstream)
+                              (close cstream)
+                              (quit)))
+               ((plusp pid) (progn
+                              (add-child pid)
+                              (close cstream)
+                              (format t "~&Count = ~a ~%" (total-children))
+                              (wait-for-children)))
+               (t           (error "Something went wrong while forking.")))))))))
+
 
 ;;; ---------------------------------------------------------------------------
 (defun run-daemon () 

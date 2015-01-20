@@ -82,6 +82,8 @@
        while line do
        (handling-errors
         (setf +++ ++   ++ +   + -   - (read-from-string line))
+        ;; TODO: Make the following sexp work. It doent quiet work well over
+        ;; the socket.
         (when (member - `("(quit)" "bye" (quit) (exit) (continue)) 
                       :test (function equal)) 
           (return))

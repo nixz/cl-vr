@@ -137,10 +137,12 @@ can send commands over the socket"
                               (usocket:socket-close socket)
                               (repl cstream)
                               (close cstream)
+                              (usocket:socket-close csocket)
                               (quit)))
                ((plusp pid) (progn
                               (add-child pid)
                               (close cstream)
+                              (usocket:socket-close csocket)
                               (format t "~&Count = ~a ~%" (total-children))
                               (wait-for-children)))
                (t           (error "Something went wrong while forking.")))))))))

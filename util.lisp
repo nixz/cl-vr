@@ -82,15 +82,12 @@
        while line do
        (handling-errors
         (setf +++ ++   ++ +   + -   - (read-from-string line))
-        (format stream "~A~%" -)
-        (when (member - `((quit) (exit) (continue)) :test (function equal)) 
-          (return-from repl)
-          )
-        (format stream "~A~%" "skipped quit")
+        (when (member - `("(quit)" "bye" (quit) (exit) (continue)) 
+                      :test (function equal)) 
+          (return))
         (setf /// //   // /   / (multiple-value-list (eval -)))
-        (format stream "~A~%" /)
         (setf *** **   ** *   * (first /))
-        (format stream "~A~%" *)
+        (format t "~&~{~S~^ ;~%     ~}~%" /)
         (force-output stream))))
 
   ;; (do ((+eof+ (gensym)))

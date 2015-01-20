@@ -1,6 +1,7 @@
 ;;;; -*- Mode: Lisp; indent-tabs-mode: nil -*-
 ;;;; ==========================================================================
-;;;; cl-vr.asd --- Define the system
+;;;; pms.lisp --- Process management system. Manages a list with child
+;;;; processes
 ;;;;
 ;;;; Copyright (c) 2013, Nikhil Shetty <nikhil.j.shetty@gmail.com>
 ;;;;   All rights reserved.
@@ -30,14 +31,38 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem cl-vr
-  :description "Defining the asdf system for cl-vr project"
-  :depends-on (#:cl-opengl
-               #:sb-bsd-sockets
-               #:usocket
-               #:sb-posix
-               #:trivial-dump-core
-               #:cl-fad)
-  :components ((:file "package")
-               (:file "pms" :depends-on ("package"))
-               (:file "util" :depends-on ("pms"))))
+
+(in-package #:cl-vr)
+
+;;; ---------------------------------------------------------------------------
+(defparameter *CHILDREN* ())
+
+;;; ---------------------------------------------------------------------------
+(defun add-child (pid)
+  "Saves the pid into the *CHILDREN* list"
+  (push pid *CHILDREN*))
+
+;;; ---------------------------------------------------------------------------
+(defun rm-child (pid)
+  "Deletes child pid from the *CHILDREN* list"
+  (delete pid *CHILDREN*))
+
+;;; ---------------------------------------------------------------------------
+(defun wait-for-children ()
+  "Loops waits for childrent to terminate. If the child terminates then that
+  particular entry is removed from the *CHILDREN* list"
+  (dolist (child *CHILDREN*)
+    (let ((pid (sb-posix:waitpid child sb-posix:WNOHANG)))
+      (when (equal pid child)
+        (rm-child pid)))))
+
+;;; ---------------------------------------------------------------------------
+(defun print-children ()
+  "Lists all the pid inside *CHILDREN*"
+  (dolist (child *CHILDREN*)
+    (when child (format t "~& ~A ~%" child))))
+
+;;; ---------------------------------------------------------------------------
+(defun total-children ()
+  "Returns the total number of children in the list"
+  (length *CHILDREN*))

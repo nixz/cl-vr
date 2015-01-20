@@ -170,3 +170,9 @@ can send commands over the socket"
   "This function makes a connection to the client and returns a connection
   object"
   (usocket:socket-connect host port))
+
+(defun quit ()
+  #+sbcl (sb-ext:exit)
+  #+clisp (ext:exit)
+  #+ccl (ccl:quit)
+  #+allegro (excl:exit))

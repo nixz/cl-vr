@@ -123,7 +123,7 @@
   "The funtion starts a repl-server on a socket. The server is essentially a
 connection server which brings up the repl on a new process. Once created one
 can send commands over the socket"
-  (let (socket (count 0))
+  (let (socket)
     (unwind-protect
          (progn
            (let ((socket (usocket:socket-listen (nslookup (hostname)) port
@@ -139,9 +139,10 @@ can send commands over the socket"
                                    (usocket:socket-close socket)
                                    (repl cstream)))
                     ((plusp pid) (progn
+                                   (add-child pid)
                                    (close cstream)
-                                   (setf count (+ count 1))
-                                   (format t "~&Count = ~a ~%" count)))
+                                   (format t "~&Count = ~a ~%" (total-children))
+                                   (wait-for-children)))
                     (t           (error "Something went wrong while forking."))))))
            (quit)))))
 

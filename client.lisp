@@ -31,14 +31,40 @@
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
 
+(in-package :cl-vr)
+
+;;; ---------------------------------------------------------------------------
 (defclass link ()
   ((socket :initarg :socket
          :initform (error ":socket must be specified")
          :allocation :instance
-         :documentation "a network socket")
-   (stream
-         :allocation :instance
-         :documentation "a stream that goes over the socket"))
+         :documentation "a network socket"))
   (:documentation "Makes a link between any two entities. Right now the two
   entities are a socket but the link may be a more abstract notion spaning not
   only across the network but also within"))
+
+;;; ---------------------------------------------------------------------------
+(defgeneric >> (obj str)
+   (:Documentation "a generic function for writing a string into the object"))
+
+;;; ---------------------------------------------------------------------------
+(defgeneric << (obj)
+   (:Documentation "a generic function for reading a string from the object"))
+
+;;; ---------------------------------------------------------------------------
+(defun make-link (&key host (port 9999))
+  "reurns an instance of the link object"
+  (make-instance 'link :socket (usocket:socket-connect host port)))
+
+;;; ---------------------------------------------------------------------------
+(defmethod >> ((obj link) str)
+  "writes string into the link"
+  (with-slots (socket) obj
+    (write-line string (usocket:socket-stream socket))
+    (force-output (usocket:socket-stream socket))))
+
+;;; ---------------------------------------------------------------------------
+(defmethod << ((obj link))
+  "returns a string which is read from the link"
+  (with-slots (socket) obj
+    (read-line (usocket:socket-stream socket))))

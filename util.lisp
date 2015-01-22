@@ -168,13 +168,16 @@ can send commands over the socket"
 
 
 ;;; ---------------------------------------------------------------------------
-(defun connection (&key host (port 9999))
-  "This function makes a connection to the client and returns a connection
-  object"
-  (usocket:socket-connect host port))
-
 (defun quit ()
   #+sbcl (sb-ext:exit)
   #+clisp (ext:exit)
   #+ccl (ccl:quit)
   #+allegro (excl:exit))
+
+;; ---------------------------------------------------------------------------
+(defun make-link (&key host (port 9999))
+  "This function makes a connection to the client and returns a connection
+  object (stream,socket")
+  (let* ((socket (usocket:socket-connect host port))
+         (stream (usocket:socket-stream socket)))
+    (values stream socket)))

@@ -47,7 +47,7 @@
 
 (defun new-server (&key host (port 9999))
   "Creates a new server host"
-  (make-instance 'server :host host :port port))
+  (make-instance 'server :name host :port port))
 
 ;;; ---------------------------------------------------------------------------
 (defclass link ()

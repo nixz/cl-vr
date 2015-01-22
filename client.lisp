@@ -68,9 +68,10 @@
    (:Documentation "a generic function for reading a string from the object"))
 
 ;;; ---------------------------------------------------------------------------
-(defun make-link (&key host (port 9999))
+(defmethod new-link ((srv server))
   "reurns an instance of the link object"
-  (make-instance 'link :socket (usocket:socket-connect host port)))
+  (with-slots (name port) srv
+    (make-instance 'link :socket (usocket:socket-connect name port))))
 
 ;;; ---------------------------------------------------------------------------
 (defmethod >> ((obj link) str)

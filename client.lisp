@@ -69,7 +69,7 @@
 
 ;;; ---------------------------------------------------------------------------
 (defmethod new-link ((srv server))
-  "reurns an instance of the link object"
+  "returns an instance of the link object"
   (with-slots (name port) srv
     (make-instance 'link :socket (usocket:socket-connect name port))))
 

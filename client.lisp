@@ -33,6 +33,22 @@
 
 (in-package :cl-vr)
 
+
+(defclass server ()
+  ((name :initarg :name
+         :initform (error ":name must be specified")
+         :allocation :instance
+         :documentation "the name of the host")
+   (port :initarg :port
+         :initform (error ":port must be specified")
+         :allocation :instance
+         :documentation "the port number where the server is listening"))
+  (:documentation "holds the server address. Host + port"))
+
+(defun new-server (&key host (port 9999))
+  "Creates a new server host"
+  (make-instance 'server :host host :port port))
+
 ;;; ---------------------------------------------------------------------------
 (defclass link ()
   ((socket :initarg :socket

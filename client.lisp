@@ -77,8 +77,9 @@
 (defmethod >> ((obj link) str)
   "writes string into the link"
   (with-slots (socket) obj
-    (write-line string (usocket:socket-stream socket))
-    (force-output (usocket:socket-stream socket))))
+    (write-line str (usocket:socket-stream socket))
+    (force-output (usocket:socket-stream socket)))
+  obj)
 
 ;;; ---------------------------------------------------------------------------
 (defmethod << ((obj link))

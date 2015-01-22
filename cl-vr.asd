@@ -40,4 +40,5 @@
                #:cl-fad)
   :components ((:file "package")
                (:file "pms" :depends-on ("package"))
+               (:file "client" :depends-on ("package"))
                (:file "util" :depends-on ("pms"))))

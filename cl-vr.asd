@@ -37,8 +37,16 @@
                #:usocket
                #:sb-posix
                #:trivial-dump-core
-               #:cl-fad)
+               #:cl-fad
+               #:3b-ovr
+               #:glop
+               #:mathkit
+               #:texatl-client
+               #:png-read
+               #:split-sequence
+               )
   :components ((:file "package")
+               (:file "test")
                (:file "pms" :depends-on ("package"))
                (:file "client" :depends-on ("package"))
                (:file "util" :depends-on ("pms"))))

@@ -2,7 +2,7 @@
 (in-package #:cl-vr)
 
 ;;; ----------------------------------------------------------------------------
-(defclass 3bovr-test (glop:window)
+(defclass window-HMD (glop:window)
   ((hmd :reader hmd :initarg :hmd)
    (world-vao :accessor world-vao)
    (count :accessor world-count)
@@ -16,7 +16,7 @@
 (defparameter *tex-size* 256)
 (defparameter *FRONT-BACK* 0.0)
 (defparameter *LEFT-RIGHT* 0.0)
-(defmethod glop:on-event ((window 3bovr-test) (event glop:key-event))
+(defmethod glop:on-event ((window window-HMD) (event glop:key-event))
   ;; exit on ESC key
   (when (glop:pressed event)
     (case (glop:keysym event)
@@ -39,7 +39,7 @@ latency = ~{m2p:~,3,3f ren:~,3,3f tWrp:~,3,3f~%~
           (%ovr::get-float-array
            hmd :dk2-latency 5)))
 
-(defmethod glop:on-event ((window 3bovr-test) event)
+(defmethod glop:on-event ((window window-HMD) event)
   ;; ignore any other events
   (declare (ignore window event)))
 
@@ -551,7 +551,7 @@ latency = ~{m2p:~,3,3f ren:~,3,3f tWrp:~,3,3f~%~
                                 "3bovr test window"
                                 w h
                                 :x x :y y
-                                :win-class '3bovr-test
+                                :win-class 'window-HMD
                                 :fullscreen t
                                 :depth-size 16)
                (setf (slot-value win 'hmd) hmd)

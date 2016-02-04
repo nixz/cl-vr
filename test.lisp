@@ -1,7 +1,5 @@
 ;; minimal example using glop
-(defpackage #:3bovr-test
-  (:use #:cl))
-(in-package #:3bovr-test)
+(in-package #:cl-vr)
 
 ;;; ----------------------------------------------------------------------------
 (defparameter *mesh* (classimp:import-into-lisp "mesh.ply"))

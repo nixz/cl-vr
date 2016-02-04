@@ -1,6 +1,7 @@
 ;;;; -*- Mode: Lisp; indent-tabs-mode: nil -*-
 ;;;; ==========================================================================
-;;;; cl-vr.asd --- Define the system
+;;;; window-HMD.lisp --- This is where HMD window and corresponding events are
+;;;; defined (IO)
 ;;;;
 ;;;; Copyright (c) 2013, Nikhil Shetty <nikhil.j.shetty@gmail.com>
 ;;;;   All rights reserved.
@@ -30,26 +31,40 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem cl-vr
-  :description "Defining the asdf system for cl-vr project"
-  :depends-on (#:cl-opengl
-               #:sb-bsd-sockets
-               #:usocket
-               #:sb-posix
-               #:trivial-dump-core
-               #:cl-fad
-               #:3b-ovr
-               #:glop
-               #:mathkit
-               #:texatl-client
-               #:png-read
-               #:split-sequence
-               #:classimp
-               )
-  :components ((:file "package")
-               (:file "global-parameters")
-               (:file "window-HMD" :depends-on ("global-parameters"))
-               (:file "test"       :depends-on ("global-parameters" "window-HMD"))
-               (:file "pms" :depends-on ("package"))
-               (:file "client" :depends-on ("package"))
-               (:file "util" :depends-on ("pms"))))
+
+(in-package #:cl-vr)
+
+;;; ----------------------------------------------------------------------------
+(defclass window-HMD (glop:window)
+  ((hmd :reader hmd :initarg :hmd)
+   (world-vao :accessor world-vao)
+   (count :accessor world-count)
+   (hud-vbo :accessor hud-vbo :initform nil)
+   (hud-vao :accessor hud-vao :initform nil)
+   (hud-count :accessor hud-count)
+   (hud-texture :accessor hud-texture)
+   (font :accessor font)))
+
+;;; ----------------------------------------------------------------------------
+(defparameter *tex-size* 256)
+(defparameter *FRONT-BACK* 0.0)
+(defparameter *LEFT-RIGHT* 0.0)
+;;; ----------------------------------------------------------------------------
+(defmethod glop:on-event ((window window-HMD) (event glop:key-event))
+  ;; exit on ESC key
+  (when (glop:pressed event)
+    (case (glop:keysym event)
+      (:escape
+       (glop:push-close-event window))
+      (:left  (setf *LEFT-RIGHT* (+ *LEFT-RIGHT* 1)))
+      (:right (setf *LEFT-RIGHT* (- *LEFT-RIGHT* 1)))
+      (:up    (setf *FRONT-BACK* (+ *FRONT-BACK* 5)) )
+      (:down  (setf *FRONT-BACK* (- *FRONT-BACK* 5)))
+      (:space
+       (format t "latency = ~{~,3,3f ~,3,3f ~,3,3f ~,3,3f ~,3,3f~}~%"
+               (%ovr::get-float-array (hmd window) :dk2-latency 5))))))
+
+;;; ----------------------------------------------------------------------------
+(defmethod glop:on-event ((window window-HMD) event)
+  ;; ignore any other events
+  (declare (ignore window event)))

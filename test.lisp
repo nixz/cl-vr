@@ -1,34 +1,6 @@
 ;; minimal example using glop
 (in-package #:cl-vr)
 
-;;; ----------------------------------------------------------------------------
-(defclass window-HMD (glop:window)
-  ((hmd :reader hmd :initarg :hmd)
-   (world-vao :accessor world-vao)
-   (count :accessor world-count)
-   (hud-vbo :accessor hud-vbo :initform nil)
-   (hud-vao :accessor hud-vao :initform nil)
-   (hud-count :accessor hud-count)
-   (hud-texture :accessor hud-texture)
-   (font :accessor font)))
-
-;;; ----------------------------------------------------------------------------
-(defparameter *tex-size* 256)
-(defparameter *FRONT-BACK* 0.0)
-(defparameter *LEFT-RIGHT* 0.0)
-(defmethod glop:on-event ((window window-HMD) (event glop:key-event))
-  ;; exit on ESC key
-  (when (glop:pressed event)
-    (case (glop:keysym event)
-      (:escape
-       (glop:push-close-event window))
-      (:left  (setf *LEFT-RIGHT* (+ *LEFT-RIGHT* 1)))
-      (:right (setf *LEFT-RIGHT* (- *LEFT-RIGHT* 1)))
-      (:up    (setf *FRONT-BACK* (+ *FRONT-BACK* 5)) )
-      (:down  (setf *FRONT-BACK* (- *FRONT-BACK* 5)))
-      (:space
-       (format t "latency = ~{~,3,3f ~,3,3f ~,3,3f ~,3,3f ~,3,3f~}~%"
-               (%ovr::get-float-array (hmd window) :dk2-latency 5))))))
 
 (defun hud-text (win hmd)
   (declare (ignorable win))
@@ -38,10 +10,6 @@ latency = ~{m2p:~,3,3f ren:~,3,3f tWrp:~,3,3f~%~
           "??"
           (%ovr::get-float-array
            hmd :dk2-latency 5)))
-
-(defmethod glop:on-event ((window window-HMD) event)
-  ;; ignore any other events
-  (declare (ignore window event)))
 
 (defun init-hud (win)
   (let ((vbo (gl:gen-buffer))

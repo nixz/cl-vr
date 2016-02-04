@@ -44,6 +44,7 @@
                #:texatl-client
                #:png-read
                #:split-sequence
+               #:classimp
                )
   :components ((:file "package")
                (:file "test")

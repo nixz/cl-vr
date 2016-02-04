@@ -2,6 +2,10 @@
 (in-package #:cl-vr)
 
 ;;; ----------------------------------------------------------------------------
+;;; Eventually all data needs to be loaded from a clouchdb database
+;;; backend. This will ensure that things can be persistent across different
+;;; computers
+;;; ----------------------------------------------------------------------------
 (defparameter *mesh* (classimp:import-into-lisp "mesh.ply"))
 (defparameter *vertices* (classimp:vertices (elt (classimp:meshes *mesh*) 0))) 
 (defparameter *indices* (classimp:faces (elt (classimp:meshes *mesh*) 0))) 

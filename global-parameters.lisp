@@ -1,8 +1,9 @@
 ;;;; -*- Mode: Lisp; indent-tabs-mode: nil -*-
 ;;;; ==========================================================================
-;;;; cl-vr.asd --- Define the system
+;;;; global-parameters.lisp --- This file contains all the global parameters
+;;;; used by other programs
 ;;;;
-;;;; Copyright (c) 2013, Nikhil Shetty <nikhil.j.shetty@gmail.com>
+;;;; Copyright (c) 2016, Nikhil Shetty <nikhil.j.shetty@gmail.com>
 ;;;;   All rights reserved.
 ;;;;
 ;;;; Redistribution and use in source and binary forms, with or without
@@ -30,25 +31,28 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem cl-vr
-  :description "Defining the asdf system for cl-vr project"
-  :depends-on (#:cl-opengl
-               #:sb-bsd-sockets
-               #:usocket
-               #:sb-posix
-               #:trivial-dump-core
-               #:cl-fad
-               #:3b-ovr
-               #:glop
-               #:mathkit
-               #:texatl-client
-               #:png-read
-               #:split-sequence
-               #:classimp
-               )
-  :components ((:file "package")
-               (:file "global-parameters")
-               (:file "test" :depends-on ("global-parameters"))
-               (:file "pms" :depends-on ("package"))
-               (:file "client" :depends-on ("package"))
-               (:file "util" :depends-on ("pms"))))
+
+(in-package #:cl-vr)
+
+;;; ----------------------------------------------------------------------------
+;;; Eventually all data needs to be loaded from a clouchdb database
+;;; backend. This will ensure that things can be persistent across different
+;;; computers
+;;; ----------------------------------------------------------------------------
+(defparameter *mesh* (classimp:import-into-lisp "mesh.ply"))
+(defparameter *vertices* (classimp:vertices (elt (classimp:meshes *mesh*) 0))) 
+(defparameter *indices* (classimp:faces (elt (classimp:meshes *mesh*) 0))) 
+
+;;; ----------------------------------------------------------------------------
+(defparameter *sphere-mesh* (classimp:import-into-lisp "sphere.ply"))
+(defparameter *sphere-vertices* 
+  (classimp:vertices (elt (classimp:meshes *sphere-mesh*) 0))) 
+(defparameter *sphere-indices* 
+  (classimp:faces (elt (classimp:meshes *sphere-mesh*) 0))) 
+
+;;; ----------------------------------------------------------------------------
+(defparameter *cylinder-mesh* (classimp:import-into-lisp "cylinder.ply"))
+(defparameter *cylinder-vertices* 
+  (classimp:vertices (elt (classimp:meshes *cylinder-mesh*) 0))) 
+(defparameter *cylinder-indices* 
+  (classimp:faces (elt (classimp:meshes *cylinder-mesh*) 0))) 

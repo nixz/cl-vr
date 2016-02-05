@@ -84,7 +84,7 @@ latency = ~{m2p:~,3,3f ren:~,3,3f tWrp:~,3,3f~%~
                        (vertex i -0.66 j :color color)
                        (vertex (1+ i) -0.66 (1+ j) :color color)
                    (vertex i -0.66 (1+ j) :color color)))
-     (load "xyz200-1.lisp")
+     (load "data/xyz200-1.lisp")
      ;; (load "/home/nshetty/Downloads/mesh.lisp")
      (mesh)
      ;; and some random cubes

@@ -1,10 +1,6 @@
 ;; minimal example using glop
 (in-package #:cl-vr)
-
-
-
-
-
+;;; ---------------------------------------------------------------------------
 (defun build-world (vao)
   (let ((vbo (gl:gen-buffer))
         (color (vector 0 0 0 1)))
@@ -55,8 +51,11 @@
      (gl:delete-buffers (list vbo))
      *count*)))
 
+;;; ---------------------------------------------------------------------------
 (defparameter *w* nil)
 (defparameter *move* nil)
+
+;;; ---------------------------------------------------------------------------
 (defun draw-world (win)
   (setf *w* win)
   (gl:clear :color-buffer :depth-buffer)
@@ -86,7 +85,7 @@
     (gl:bind-vertex-array 0))
 
 
-
+;;; ---------------------------------------------------------------------------
 (defun draw-frame (hmd &key eye-render-desc fbo eye-textures win)
   (assert (and eye-render-desc fbo eye-textures))
   (let* ((timing (%ovrhmd::begin-frame hmd
@@ -195,15 +194,8 @@
       ;; pass textures to SDK for distortion, display and vsync
       (%ovr::end-frame hmd head-pose eye-textures))))
 
-(defparameter *once* nil)
-
+;;; ---------------------------------------------------------------------------
 (defun test-3bovr ()
-  (when *once*
-    ;; running it twice at once breaks things, so try to avoid that...
-    (format t "already running?~%")
-    (return-from test-3bovr nil))
-  ;; initialize library
-  (setf *once* t)
   (unwind-protect
        (%ovr::with-ovr ok (:debug nil :timeout-ms 500)
          (unless ok
@@ -392,9 +384,7 @@
                    (format t "done~%")
                    (sleep 1))))))
          (progn
-           (format t "done2~%")
-           (setf *once* nil)
-           (format t "done3 ~s~%" *once*)))))
+           (format t "done2~%")))))
 
 
 

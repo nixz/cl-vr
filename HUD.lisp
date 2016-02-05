@@ -31,6 +31,8 @@
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
 
+(in-package #:cl-vr)
+
 (defun hud-text (win hmd)
   (declare (ignorable win))
   (format nil "fps: ~s~%~

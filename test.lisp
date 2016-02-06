@@ -194,6 +194,55 @@
       ;; pass textures to SDK for distortion, display and vsync
       (%ovr::end-frame hmd head-pose eye-textures))))
 
+(defclass OVR-libaray ()
+  ((version :initarg :version
+         :initform (error ":version must be specified")
+         :accessor version
+         :allocation :instance
+         :documentation "libovr version")
+   (time-in-seconds :initarg :time
+         :initform (error ":time must be specified")
+         :accessor time-in-seconds
+         :allocation :instance
+         :documentation "Dont know what this really does but. Time when we initialized perhaps"))
+  (:documentation "initializing the libovr library"))
+
+
+(defmethod initialize-instance :after ((library OVR-library))
+  "Initialized the lib ovr and fill out a few variables"
+  (let ((init (%ovr::initialize :debug nil :timeout-ms 500)))
+    (with-slots (version time-in-seconds) library
+      (setf version (%ovr::get-version-string))
+      (setf time-in-seconds (%ovr::get-time-in-seconds)))
+    (format t "version: ~s~%" (%ovr::get-version-string))
+    (format t "time = ~,3f~%" (%ovr::get-time-in-seconds))
+    (format t "detect: ~s HMDs available~%" (%ovrhmd::detect))
+    ) 
+  )
+
+(defmethod print-object ((obj OVR-library) out)
+  "prints the libovr object")
+
+
+(defclass OVR-HMD ()
+  ((is-detected :initarg :available
+         :initform (error ":available must be specified")
+         :accessor is-detected
+         :allocation :instance
+         :documentation "Check if HMD is available")
+   (props :initarg :props
+         :initform (error ":props must be specified")
+         :accessor props
+         :allocation :instance
+         :documentation "hmd properties"))
+  (:documentation "the class which does oculus rift"))
+
+(defmethod initialize-instance :after ((hmd OVR-HMD ))
+  ""
+  (with-slots (is-detected props) hmd
+    (setf is-detected (%ovrhmd::detect)))
+  (format t "detect: ~s HMDs available~%" (%ovrhmd::detect)))
+
 ;;; ---------------------------------------------------------------------------
 (defun test-3bovr ()
   (unwind-protect

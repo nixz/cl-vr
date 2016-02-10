@@ -1,5 +1,6 @@
 ;; minimal example using glop
 (in-package #:cl-vr)
+
 ;;; ---------------------------------------------------------------------------
 (defun build-world (vao)
   (let ((vbo (gl:gen-buffer))
@@ -194,7 +195,7 @@
       ;; pass textures to SDK for distortion, display and vsync
       (%ovr::end-frame hmd head-pose eye-textures))))
 
-(defclass OVR-libaray ()
+(defclass OVR-library ()
   ((version :initarg :version
          :initform (error ":version must be specified")
          :accessor version
@@ -208,7 +209,7 @@
   (:documentation "initializing the libovr library"))
 
 
-(defmethod initialize-instance :after ((library OVR-library))
+(defmethod initialize-instance :after ((library OVR-library) &key)
   "Initialized the lib ovr and fill out a few variables"
   (let ((init (%ovr::initialize :debug nil :timeout-ms 500)))
     (with-slots (version time-in-seconds) library
@@ -217,8 +218,7 @@
     (format t "version: ~s~%" (%ovr::get-version-string))
     (format t "time = ~,3f~%" (%ovr::get-time-in-seconds))
     (format t "detect: ~s HMDs available~%" (%ovrhmd::detect))
-    ) 
-  )
+    ))
 
 (defmethod print-object ((obj OVR-library) out)
   "prints the libovr object")

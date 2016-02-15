@@ -54,16 +54,14 @@
       (setf property (make-instance 'OVR-Properties :hmd hmd)))))
 
 ;;; ---------------------------------------------------------------------------
-(defmethod open ((hmd OVR-HMD) &key index)
+(defmethod attach ((hmd OVR-HMD) &key index)
   "Creates a OVR hmd"
   (setf (slot-value hmd 'handle) (%ovrhmd::create index))
     (unless handle
-      (progn
-        (format t "~& Sorry couldnt create object ~%")
-        (return nil))))
+      (error "(OVR-HMD:attach) couldnt create object")))
 
 ;;; ---------------------------------------------------------------------------
-(defmethod close (hmd OVR-HMD)
+(defmethod detach ((hmd OVR-HMD))
   "destroys the HMD"
   (%ovrhmd::destroy (slot-value hmd 'handle)))
 
@@ -247,7 +245,7 @@
 ;;; ---------------------------------------------------------------------------
 (defmethod initialize-instance :after ((library OVR-library) &key)
   "Initialized the lib ovr and fill out a few variables"
-  (if (open library)
+  (if (attach library)
     (with-slots (version time-in-seconds total-hmds-detected) library
       (setf version (%ovr::get-version-string))
       (setf time-in-seconds (%ovr::get-time-in-seconds))
@@ -255,14 +253,14 @@
     nil))
 
 ;;; ---------------------------------------------------------------------------
-(defmethod open ((library OVR-library))
+(defmethod attach ((library OVR-library) &key)
   "Wrapper to the original create method"
   (if (%ovr::initialize :debug nil :timeout-ms 500)
       t
       nil))
 
 ;;; ---------------------------------------------------------------------------
-(defmethod close ((library OVR-library))
+(defmethod detach ((library OVR-library))
   "Wrapper to shutdown the OVR library context"
   (%ovr::shutdown))
 

@@ -38,12 +38,25 @@
 (defclass window-HMD (glop:window)
   ((hmd :reader hmd :initarg :hmd)
    (world-vao :accessor world-vao)
+   (world-vao-background :accessor world-vao)
    (count :accessor world-count)
+   (count-background :accessor world-count)
    (hud-vbo :accessor hud-vbo :initform nil)
    (hud-vao :accessor hud-vao :initform nil)
    (hud-count :accessor hud-count)
    (hud-texture :accessor hud-texture)
    (font :accessor font)))
+
+;;; ----------------------------------------------------------------------------
+(defmethod swap (obj window-HMD)
+  "swap background and foreground objects"
+  (with-slots (world-vao count world-vao-background count-background) obj
+    (let ((temp-vao (world-vao))
+          (temp-count (count)))
+      (setf world-vao world-vao-background)
+      (setf count count-background)
+      (setf world-vao-background temp-vao)
+      (setf count-background temp-count))))
 
 ;;; ----------------------------------------------------------------------------
 (defparameter *tex-size* 256)

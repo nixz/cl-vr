@@ -45,6 +45,8 @@
                #:png-read
                #:split-sequence
                #:classimp
+               #:lfarm-server
+               #:lfarm-client
                )
   :components ((:file "package")
                (:file "global-parameters")

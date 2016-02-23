@@ -140,6 +140,7 @@
                :documentation "about-slot"))
   (:documentation "This is the class which stores the HMD properties"))
 
+;;; ---------------------------------------------------------------------------
 (defmethod initialize-instance :after ((properties OVR-Properties ) &key (hmd OVR-HMD))
   "Initialize the object"
     ;; Get all the properties and fill up the class

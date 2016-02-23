@@ -195,6 +195,10 @@
       ;; pass textures to SDK for distortion, display and vsync
       (%ovr::end-frame hmd head-pose eye-textures))))
 
+
+;;; ---------------------------------------------------------------------------
+(defparameter *vaos* nil)
+
 ;;; ---------------------------------------------------------------------------
 (defun test-3bovr ()
   (unwind-protect
@@ -273,7 +277,8 @@
                                             (glop::win32-window-id win)
                                             (cffi:null-pointer) (cffi:null-pointer))
                  ;; configure FBO for offscreen rendering of the eye views
-                 (let* ((vaos (gl:gen-vertex-arrays 2))
+                 (setf *vaos* (gl:gen-vertex-arrays 2)) 
+                 (let* (
                         (fbo (gl:gen-framebuffer))
                         (textures (gl:gen-textures 2))
                         (renderbuffer (gl:gen-renderbuffer))
@@ -362,9 +367,9 @@
 
                    ;; set up a vao containing a simple 'world' geometry,
                    ;; and hud geometry
-                   (setf (world-vao win) (first vaos)
-                         (world-count win) (build-world (first vaos))
-                         (hud-vao win) (second vaos))
+                   (setf (world-vao win) (first *vaos*)
+                         (world-count win) (build-world (first *vaos*))
+                         (hud-vao win) (second *vaos*))
                    (init-hud win)
 
                    ;; main loop
@@ -378,7 +383,7 @@
                                             :eye-textures eye-textures
                                             :win win))
                    ;; clean up
-                   (gl:delete-vertex-arrays vaos)
+                   (gl:delete-vertex-arrays *vaos*)
                    (gl:delete-framebuffers (list fbo))
                    (gl:delete-textures textures)
                    (gl:delete-renderbuffers (list renderbuffer))

@@ -16,9 +16,17 @@
   (gl:polygon-mode :front-and-back :fill)
   (gl:light :light0 :position '(.0 .0 .0 0.0))
   (when (world-count win)
+    (render win)
+    (format t "~& out : ~a ~%" (world-count win))
+
+    ;; (when (size (checkerboard win))
+    ;;   (render (checkerboard win)))
+    
     (gl:disable :texture-2d)
     (gl:bind-vertex-array (world-vao win))
     (%gl:draw-arrays :triangles 0 (world-count win)))
+
+
   (gl:point-size 10)
   (gl:with-pushed-matrix* (:modelview)
     ;(gl:load-identity)
@@ -320,7 +328,9 @@
                          (world-count win) (build-world (first *vaos*))
                          (hud-vao win) (second *vaos*)
                          (ball-n-stick-1-vao win) (third *vaos*)
-                         (ball-n-stick-1-vao-size win) (build-checker-board (third *vaos*)))
+                         (ball-n-stick-1-vao-size win) (build-checker-board (third *vaos*))
+                         (checkerboard win) (make-checkerboard-vao))
+                   
                    (init-hud win)
 
                    ;; main loop

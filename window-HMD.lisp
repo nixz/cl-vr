@@ -35,13 +35,47 @@
 (in-package #:cl-vr)
 
 ;;; ----------------------------------------------------------------------------
+(defclass vertex-array ()
+  ((vao :initarg :vao
+         :initform (first (gl:gen-vertex-arrays 1)) 
+         :accessor vao
+         :documentation "The vertex array object. Make sure the opengl context
+         is setup before the object is initialized")
+   (size :initarg :size
+         :initform nil
+         :accessor size
+         :documentation "The size of the elements help by the vao")
+   (is-active :initarg :is-active
+         :initform nil
+         :accessor is-active
+         :documentation "check to see if the vertex array is active to render"))
+  (:documentation "Vertex Array objects"))
+
+;;; ----------------------------------------------------------------------------
+(defmethod initialize-instance :after ((obj vertex-array) &key is-active)
+  "initialize the vertex array"
+  (setf (slot-value obj 'is-active) is-active))
+
+;;; ----------------------------------------------------------------------------
+(defmethod render ((obj vertex-array) &key)
+  "render the vertex array"
+  (with-slots (vao size is-active) obj
+    (format t "~& checkerboard: ~a ~%" size)
+    (when (and size is-active) 
+      (gl:bind-vertex-array vao)
+      (%gl:draw-arrays :triangles 0 size))))
+
 ;;; ----------------------------------------------------------------------------
 (defclass window-HMD (glop:window)
   ((hmd :reader hmd :initarg :hmd)
+   (checkerboard :initarg :checkerboard
+                 :accessor checkerboard
+                 :type 'vertex-array
+         :documentation "checkerboard")
    (ball-n-stick-1-vao :accessor ball-n-stick-1-vao)
    (ball-n-stick-1-vao-size :accessor ball-n-stick-1-vao-size)
    (world-vao :accessor world-vao)
-   (count :accessor world-count)
+   (count :initform nil :accessor world-count)
    (world-vao-background :accessor world-vao)
    (count-background :accessor world-count)
    (hud-vbo :accessor hud-vbo :initform nil)
@@ -49,6 +83,22 @@
    (hud-count :accessor hud-count)
    (hud-texture :accessor hud-texture)
    (font :accessor font)))
+
+;;; ----------------------------------------------------------------------------
+(defmethod render ((obj window-HMD) &key)
+  "render all the vao's in the window"
+  (with-slots (ball-n-stick-1-vao ball-n-stick-1-vao-size world-vao count) obj 
+    (format t "~& in : ~a ~%" count)
+    (when count
+      (gl:disable :texture-2d)
+      (gl:bind-vertex-array world-vao)
+      (%gl:draw-arrays :triangles 0 count))
+
+
+    ;;(gl:bind-vertex-array ball-n-stick-1-vao)
+    ;;(%gl:draw-arrays :triangles 0 ball-n-stick-1-vao-size)
+    )
+  )
 
 ;;; ----------------------------------------------------------------------------
 (defmethod swap (obj window-HMD)

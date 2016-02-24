@@ -118,6 +118,7 @@
            (v c)
            (v d)))))
 
+
 ;; (defun skew-symmetric-cross-product (v)
 ;;   (let ((v1 (aref v 0))
 ;;         (v2 (aref v 1))
@@ -169,7 +170,6 @@
                   (elt vdata (elt (elt tindices i) 1))    
                   (elt vdata (elt (elt tindices i) 2))
                   :tx m :color color))))
-
 
 ;;; ----------------------------------------------------------------------------
 (defun sphere (x y z r &key (color (vector 1.0 .0 .0 1.0)))
@@ -241,6 +241,11 @@
 ;;                            ;; (z (* (sin (* 2 PI s S-1))
 ;;                            ;;       (sin (* PI r R-1))))))).))))
 
+(defun make-checkerboard-vao ()
+  (let ((obj (make-instance 'vertex-array :is-active t)))
+    (with-slots (vao size is-active) obj
+      (setf size (build-checker-board vao)))
+    obj))
 
 ;;; ---------------------------------------------------------------------------
 (defun build-checker-board (vao)

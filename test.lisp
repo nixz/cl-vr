@@ -2,60 +2,9 @@
 (in-package #:cl-vr)
 
 ;;; ---------------------------------------------------------------------------
-(defun build-world (vao)
-  (let ((vbo (gl:gen-buffer))
-        (color (vector 0 0 0 1)))
-   (labels ((color (r g b &optional (a 1))
-              (setf color (vector r g b a))))
-     ;; checkerboard ground
-     (loop for i from -8 below 8
-           do (loop for j from -8 below 8
-                    for p = (oddp (+ i j))
-                    do (if p
-                           (color 0.0 0.9 0.9 1.0)
-                           (color 0.1 0.1 0.1 1.0))
-                       (vertex i -0.66 j :color color)
-                       (vertex (1+ i) -0.66 j :color color)
-                       (vertex (1+ i) -0.66 (1+ j) :color color)
-                       (vertex i -0.66 j :color color)
-                       (vertex (1+ i) -0.66 (1+ j) :color color)
-                   (vertex i -0.66 (1+ j) :color color)))
-     (load "data/xyz200-1.lisp")
-     ;; (load "/home/nshetty/Downloads/mesh.lisp")
-     (mesh)
-     ;; and some random cubes
-     ;; (let ((*random-state* (make-random-state *random-state*))
-     ;;       (r 1000.0))
-     ;;   (flet ((r () (- (random r) (/ r 2))))
-     ;;     (loop for i below 5000
-     ;;           do (color (random 1.0) (+ 0.5 (random 0.5)) (random 1.0) 1.0)
-     ;;              (cube (+ 0.0 (r)) (- (r)) (+ 1.5 (r)) (+ 0.05 (random 0.10)))
-     ;;              (sphere (+ 0.0 (r)) (- (r)) (+ 1.5 (r)) (+ 0.05 (random 0.10))))))
-     (let ((stride (* 11 4)))
-       (gl:bind-buffer :array-buffer vbo)
-       (%gl:buffer-data :array-buffer (* *count* stride) (cffi:null-pointer)
-                        :static-draw)
-       (gl:bind-vertex-array vao)
-       (gl:enable-client-state :vertex-array)
-       (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
-       (gl:enable-client-state :normal-array)
-       (%gl:normal-pointer :float stride (* 8 4))
-       (gl:enable-client-state :color-array)
-       (%gl:color-pointer 4 :float stride (* 4 4)))
-     (let ((p (%gl:map-buffer :array-buffer :write-only)))
-       (unwind-protect
-            (loop for i below (fill-pointer *buf*)
-                  do (setf (cffi:mem-aref p :float i)
-                           (aref *buf* i)))
-         (%gl:unmap-buffer :array-buffer)))
-     (gl:bind-vertex-array 0)
-     (gl:delete-buffers (list vbo))
-     *count*)))
-
-;;; ---------------------------------------------------------------------------
 (defparameter *w* nil)
-(defparameter *move* nil)
-
+(defparameter *move* nil
+)
 ;;; ---------------------------------------------------------------------------
 (defun draw-world (win)
   (setf *w* win)
@@ -277,7 +226,7 @@
                                             (glop::win32-window-id win)
                                             (cffi:null-pointer) (cffi:null-pointer))
                  ;; configure FBO for offscreen rendering of the eye views
-                 (setf *vaos* (gl:gen-vertex-arrays 2)) 
+                 (setf *vaos* (gl:gen-vertex-arrays 3)) 
                  (let* (
                         (fbo (gl:gen-framebuffer))
                         (textures (gl:gen-textures 2))
@@ -369,7 +318,9 @@
                    ;; and hud geometry
                    (setf (world-vao win) (first *vaos*)
                          (world-count win) (build-world (first *vaos*))
-                         (hud-vao win) (second *vaos*))
+                         (hud-vao win) (second *vaos*)
+                         (ball-n-stick-1-vao win) (third *vaos*)
+                         (ball-n-stick-1-vao-size win) (build-checker-board (third *vaos*)))
                    (init-hud win)
 
                    ;; main loop

@@ -35,11 +35,14 @@
 (in-package #:cl-vr)
 
 ;;; ----------------------------------------------------------------------------
+;;; ----------------------------------------------------------------------------
 (defclass window-HMD (glop:window)
   ((hmd :reader hmd :initarg :hmd)
+   (ball-n-stick-1-vao :accessor ball-n-stick-1-vao)
+   (ball-n-stick-1-vao-size :accessor ball-n-stick-1-vao-size)
    (world-vao :accessor world-vao)
-   (world-vao-background :accessor world-vao)
    (count :accessor world-count)
+   (world-vao-background :accessor world-vao)
    (count-background :accessor world-count)
    (hud-vbo :accessor hud-vbo :initform nil)
    (hud-vao :accessor hud-vao :initform nil)

@@ -72,12 +72,12 @@
                  :accessor checkerboard
                  :type 'vertex-array
          :documentation "checkerboard")
-   (checkerboard-vao :accessor checkerboard-vao)
-   (checkerboard-count :accessor checkerboard-count)
    (xyz-200-01-vao :accessor xyz-200-01-vao)
    (xyz-200-01-count :accessor xyz-200-01-count)
    (xyz-200-02-vao :accessor xyz-200-02-vao)
    (xyz-200-02-count :accessor xyz-200-02-count)
+   (xyz200-1-vao :accessor xyz200-1-vao)
+   (xyz200-1-count :accessor xyz200-1-count)
    (world-vao :accessor world-vao)
    (count :initform nil :accessor world-count)
    (world-vao-background :accessor world-vao)
@@ -91,7 +91,7 @@
 ;;; ----------------------------------------------------------------------------
 (defmethod render ((obj window-HMD) &key)
   "render all the vao's in the window"
-  (with-slots (checkerboard-vao checkerboard-count world-vao count) obj 
+  (with-slots (xyz200-1-vao xyz200-1-count world-vao count) obj 
     (format t "~& in : ~a ~%" count)
     (when count
       (gl:disable :texture-2d)

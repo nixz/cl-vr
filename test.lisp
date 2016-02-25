@@ -25,11 +25,12 @@
 
 ;;; ---------------------------------------------------------------------------
 (defun draw-xyz200-1 (win)
-  (when (checkerboard-count win)
+  (when (xyz200-1-count win)
     (gl:disable :texture-2d)
-    (gl:bind-vertex-array (checkerboard-vao win))
-    (%gl:draw-arrays :triangles 0 (checkerboard-count win)))
-  (gl:point-size 10)
+    (gl:bind-vertex-array (xyz200-1-vao win))
+    (%gl:draw-arrays :triangles 0 (xyz200-1-count win)))
+  (gl:bind-vertex-array 0))
+
 ;;; ---------------------------------------------------------------------------
 (defun draw-xyz-200-01 (win)
   (when (xyz-200-01-count win)
@@ -354,12 +355,13 @@
                    (setf (world-vao win) (first *vaos*)
                          (world-count win) (build-mesh (first *vaos*))
                          (hud-vao win) (second *vaos*)
-                         (checkerboard-vao win) (third *vaos*)
-                         (checkerboard-count win) (build-xyz200-1 (third *vaos*))
+                         (xyz200-1-vao win) (third *vaos*)
+                         (xyz200-1-count win) (build-xyz200-1 (third *vaos*))
                          (xyz-200-01-vao win) (fourth *vaos*)
                          (xyz-200-01-count win) (build-xyz-200-01 (fourth *vaos*))
                          (xyz-200-02-vao win) (fifth *vaos*)
                          (xyz-200-02-count win) (build-xyz-200-02 (fifth *vaos*))
+                   
                          )
                    
                    (init-hud win)

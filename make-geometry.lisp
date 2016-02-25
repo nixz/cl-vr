@@ -196,7 +196,7 @@
                   :tx m :color color))))
 
 ;;; ----------------------------------------------------------------------------
-(defmethod mesh ((obj geometry) &key (color (vector 1.0 .5 .0 .5)))
+(defmethod mesh ((obj geometry) &key (color (vector 1.0 .5 .0 .3)))
   (let* ()
     (loop for i from 0 below (length *indices*)
        do (flet ((v (v)

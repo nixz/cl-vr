@@ -72,8 +72,8 @@
                  :accessor checkerboard
                  :type 'vertex-array
          :documentation "checkerboard")
-   (ball-n-stick-1-vao :accessor ball-n-stick-1-vao)
-   (ball-n-stick-1-vao-size :accessor ball-n-stick-1-vao-size)
+   (checkerboard-vao :accessor checkerboard-vao)
+   (checkerboard-count :accessor checkerboard-count)
    (world-vao :accessor world-vao)
    (count :initform nil :accessor world-count)
    (world-vao-background :accessor world-vao)
@@ -87,7 +87,7 @@
 ;;; ----------------------------------------------------------------------------
 (defmethod render ((obj window-HMD) &key)
   "render all the vao's in the window"
-  (with-slots (ball-n-stick-1-vao ball-n-stick-1-vao-size world-vao count) obj 
+  (with-slots (checkerboard-vao checkerboard-count world-vao count) obj 
     (format t "~& in : ~a ~%" count)
     (when count
       (gl:disable :texture-2d)
@@ -95,8 +95,8 @@
       (%gl:draw-arrays :triangles 0 count))
 
 
-    ;;(gl:bind-vertex-array ball-n-stick-1-vao)
-    ;;(%gl:draw-arrays :triangles 0 ball-n-stick-1-vao-size)
+    ;;(gl:bind-vertex-array checkerboard-vao)
+    ;;(%gl:draw-arrays :triangles 0 checkerboard-count)
     )
   )
 

@@ -30,6 +30,20 @@
     (gl:bind-vertex-array (checkerboard-vao win))
     (%gl:draw-arrays :triangles 0 (checkerboard-count win)))
   (gl:point-size 10)
+;;; ---------------------------------------------------------------------------
+(defun draw-xyz-200-01 (win)
+  (when (xyz-200-01-count win)
+    (gl:disable :texture-2d)
+    (gl:bind-vertex-array (xyz-200-01-vao win))
+    (%gl:draw-arrays :triangles 0 (xyz-200-01-count win)))
+  (gl:bind-vertex-array 0))
+
+;;; ---------------------------------------------------------------------------
+(defun draw-xyz-200-02 (win)
+  (when (xyz-200-02-count win)
+    (gl:disable :texture-2d)
+    (gl:bind-vertex-array (xyz-200-02-vao win))
+    (%gl:draw-arrays :triangles 0 (xyz-200-02-count win)))
   (gl:bind-vertex-array 0))
 
 ;;; ---------------------------------------------------------------------------

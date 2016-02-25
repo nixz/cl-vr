@@ -68,10 +68,6 @@
 ;;; ----------------------------------------------------------------------------
 (defclass window-HMD (glop:window)
   ((hmd :reader hmd :initarg :hmd)
-   (checkerboard :initarg :checkerboard
-                 :accessor checkerboard
-                 :type 'vertex-array
-         :documentation "checkerboard")
    (xyz-200-01-vao :accessor xyz-200-01-vao)
    (xyz-200-01-count :accessor xyz-200-01-count)
    (xyz-200-02-vao :accessor xyz-200-02-vao)

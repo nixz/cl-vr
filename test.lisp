@@ -261,7 +261,7 @@
                                             (glop::win32-window-id win)
                                             (cffi:null-pointer) (cffi:null-pointer))
                  ;; configure FBO for offscreen rendering of the eye views
-                 (setf *vaos* (gl:gen-vertex-arrays 3)) 
+                 (setf *vaos* (gl:gen-vertex-arrays 5)) 
                  (let* (
                         (fbo (gl:gen-framebuffer))
                         (textures (gl:gen-textures 2))
@@ -356,6 +356,10 @@
                          (hud-vao win) (second *vaos*)
                          (checkerboard-vao win) (third *vaos*)
                          (checkerboard-count win) (build-xyz200-1 (third *vaos*))
+                         (xyz-200-01-vao win) (fourth *vaos*)
+                         (xyz-200-01-count win) (build-xyz-200-01 (fourth *vaos*))
+                         (xyz-200-02-vao win) (fifth *vaos*)
+                         (xyz-200-02-count win) (build-xyz-200-02 (fifth *vaos*))
                          )
                    
                    (init-hud win)

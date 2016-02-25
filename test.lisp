@@ -2,12 +2,10 @@
 (in-package #:cl-vr)
 
 ;;; ---------------------------------------------------------------------------
-(defparameter *w* nil)
 (defparameter *move* nil
 )
 ;;; ---------------------------------------------------------------------------
 (defun draw-world (win)
-  (setf *w* win)
   (gl:clear :color-buffer :depth-buffer)
   (gl:enable :framebuffer-srgb
              :line-smooth :blend :point-smooth :depth-test

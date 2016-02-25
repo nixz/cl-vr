@@ -2,10 +2,29 @@
 (in-package #:cl-vr)
 
 ;;; ---------------------------------------------------------------------------
-(defparameter *move* nil
-)
+(defparameter *move* nil)
+
 ;;; ---------------------------------------------------------------------------
-(defun draw-world (win)
+(defun draw (win)
+  "render different stuff"
+  (gl:clear :color-buffer :depth-buffer)
+  (gl:enable :framebuffer-srgb
+             :line-smooth :blend :point-smooth :depth-test
+             :lighting :light0 :color-material)
+  (gl:blend-func :src-alpha :one-minus-src-alpha)
+  (gl:polygon-mode :front-and-back :fill)
+  (gl:light :light0 :position '(.0 .0 .0 0.0)))
+
+;;; ---------------------------------------------------------------------------
+(defun draw-xyz200-1 (win)
+  (when (checkerboard-count win)
+    (gl:bind-vertex-array (checkerboard-vao win))
+    (%gl:draw-arrays :triangles 0 (checkerboard-count win)))
+  (gl:point-size 10)
+  (gl:bind-vertex-array 0))
+
+;;; ---------------------------------------------------------------------------
+(defun draw-mesh (win)
   (gl:clear :color-buffer :depth-buffer)
   (gl:enable :framebuffer-srgb
              :line-smooth :blend :point-smooth :depth-test

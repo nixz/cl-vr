@@ -18,6 +18,7 @@
 ;;; ---------------------------------------------------------------------------
 (defun draw-xyz200-1 (win)
   (when (checkerboard-count win)
+    (gl:disable :texture-2d)
     (gl:bind-vertex-array (checkerboard-vao win))
     (%gl:draw-arrays :triangles 0 (checkerboard-count win)))
   (gl:point-size 10)

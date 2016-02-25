@@ -33,17 +33,10 @@
   (gl:polygon-mode :front-and-back :fill)
   (gl:light :light0 :position '(.0 .0 .0 0.0))
   (when (world-count win)
-    (render win)
-    (format t "~& out : ~a ~%" (world-count win))
-
-    ;; (when (size (checkerboard win))
-    ;;   (render (checkerboard win)))
-    
     (gl:disable :texture-2d)
     (gl:bind-vertex-array (world-vao win))
     (%gl:draw-arrays :triangles 0 (world-count win)))
-
-
+  
   (gl:point-size 10)
   (gl:with-pushed-matrix* (:modelview)
     ;(gl:load-identity)
@@ -161,7 +154,8 @@
                (gl:translate (aref *move* 0) 
                              (aref *move* 1)
                              (aref *move* 2))
-               (draw-world win)
+               (draw-mesh win)
+               ;; (draw-xyz200-1 win)
                ))  
              )
            )
@@ -342,11 +336,11 @@
                    ;; set up a vao containing a simple 'world' geometry,
                    ;; and hud geometry
                    (setf (world-vao win) (first *vaos*)
-                         (world-count win) (build-world (first *vaos*))
+                         (world-count win) (build-mesh (first *vaos*))
                          (hud-vao win) (second *vaos*)
-                         (ball-n-stick-1-vao win) (third *vaos*)
-                         (ball-n-stick-1-vao-size win) (build-checker-board (third *vaos*))
-                         (checkerboard win) (make-checkerboard-vao))
+                         (checkerboard-vao win) (third *vaos*)
+                         (checkerboard-count win) (build-xyz200-1 (third *vaos*))
+                         )
                    
                    (init-hud win)
 

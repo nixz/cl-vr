@@ -7,13 +7,21 @@
 ;;; ---------------------------------------------------------------------------
 (defun draw (win)
   "render different stuff"
+  (gl:shade-model :smooth)
   (gl:clear :color-buffer :depth-buffer)
   (gl:enable :framebuffer-srgb
-             :line-smooth :blend :point-smooth :depth-test
+             :line-smooth :point-smooth :depth-test
              :lighting :light0 :color-material)
-  (gl:blend-func :src-alpha :one-minus-src-alpha)
+  (gl:light :light0 :position '(.8 .8 .8 1.0))
+
   (gl:polygon-mode :front-and-back :fill)
-  (gl:light :light0 :position '(.0 .0 .0 0.0)))
+  (draw-xyz200-1 win)
+  (gl:enable :blend)
+  (gl:blend-func :src-alpha :one-minus-src-alpha)
+  ;; (gl:blend-func :zero :src-color)
+  (draw-mesh win)
+  ;(draw-hud win)
+  )
 
 ;;; ---------------------------------------------------------------------------
 (defun draw-xyz200-1 (win)
@@ -26,18 +34,15 @@
 
 ;;; ---------------------------------------------------------------------------
 (defun draw-mesh (win)
-  (gl:clear :color-buffer :depth-buffer)
-  (gl:enable :framebuffer-srgb
-             :line-smooth :blend :point-smooth :depth-test
-             :lighting :light0 :color-material)
-  (gl:blend-func :src-alpha :one-minus-src-alpha)
-  (gl:polygon-mode :front-and-back :fill)
-  (gl:light :light0 :position '(.0 .0 .0 0.0))
   (when (world-count win)
     (gl:disable :texture-2d)
     (gl:bind-vertex-array (world-vao win))
     (%gl:draw-arrays :triangles 0 (world-count win)))
-  
+    (gl:bind-vertex-array 0))
+
+;;; ---------------------------------------------------------------------------
+(defun draw-hud (win)
+  "Draw the headsup display"
   (gl:point-size 10)
   (gl:with-pushed-matrix* (:modelview)
     ;(gl:load-identity)
@@ -49,10 +54,7 @@
       (gl:enable :texture-2d)
       (gl:bind-texture :texture-2d (hud-texture win))
       (gl:bind-vertex-array (hud-vao win))
-      (%gl:draw-arrays :triangles 0 (hud-count win)))
-    )
-    (gl:bind-vertex-array 0))
-
+      (%gl:draw-arrays :triangles 0 (hud-count win)))))
 
 ;;; ---------------------------------------------------------------------------
 (defun draw-frame (hmd &key eye-render-desc fbo eye-textures win)
@@ -155,8 +157,7 @@
                (gl:translate (aref *move* 0) 
                              (aref *move* 1)
                              (aref *move* 2))
-               (draw-mesh win)
-               ;; (draw-xyz200-1 win)
+               (draw win)
                ))  
              )
            )

@@ -336,6 +336,7 @@
      (gl:delete-buffers (list vbo))
      (length (buf geometry)))))
 
+;;; ---------------------------------------------------------------------------
 (defun build-xyz200-1 (vao)
   (let ((vbo (gl:gen-buffer))
         (color (vector 0 0 0 1)))
@@ -365,3 +366,65 @@
      (gl:bind-vertex-array 0)
      (gl:delete-buffers (list vbo))
      (length (buf *xyz200-1*)))))
+
+;;; ---------------------------------------------------------------------------
+(defun build-xyz-200-01 (vao)
+  (let ((vbo (gl:gen-buffer))
+        (color (vector 0 0 0 1)))
+   (labels ((color (r g b &optional (a 1))
+              (setf color (vector r g b a))))
+     (load "data/xyz-200-01.lisp")
+     
+     (let ((stride (* 11 4)))
+       (gl:bind-buffer :array-buffer vbo)
+       (%gl:buffer-data :array-buffer
+                        (* (length (buf *xyz-200-01*)) stride)
+                        (cffi:null-pointer)
+                        :static-draw)
+       (gl:bind-vertex-array vao)
+       (gl:enable-client-state :vertex-array)
+       (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
+       (gl:enable-client-state :normal-array)
+       (%gl:normal-pointer :float stride (* 8 4))
+       (gl:enable-client-state :color-array)
+       (%gl:color-pointer 4 :float stride (* 4 4)))
+     (let ((p (%gl:map-buffer :array-buffer :write-only)))
+       (unwind-protect
+            (loop for i below (fill-pointer (buf *xyz-200-01*))
+                  do (setf (cffi:mem-aref p :float i)
+                           (aref (buf *xyz-200-01*) i)))
+         (%gl:unmap-buffer :array-buffer)))
+     (gl:bind-vertex-array 0)
+     (gl:delete-buffers (list vbo))
+     (length (buf *xyz-200-01*)))))
+
+;;; ---------------------------------------------------------------------------
+(defun build-xyz-200-02 (vao)
+  (let ((vbo (gl:gen-buffer))
+        (color (vector 0 0 0 1)))
+   (labels ((color (r g b &optional (a 1))
+              (setf color (vector r g b a))))
+     (load "data/xyz-200-02.lisp")
+     
+     (let ((stride (* 11 4)))
+       (gl:bind-buffer :array-buffer vbo)
+       (%gl:buffer-data :array-buffer
+                        (* (length (buf *xyz-200-02*)) stride)
+                        (cffi:null-pointer)
+                        :static-draw)
+       (gl:bind-vertex-array vao)
+       (gl:enable-client-state :vertex-array)
+       (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
+       (gl:enable-client-state :normal-array)
+       (%gl:normal-pointer :float stride (* 8 4))
+       (gl:enable-client-state :color-array)
+       (%gl:color-pointer 4 :float stride (* 4 4)))
+     (let ((p (%gl:map-buffer :array-buffer :write-only)))
+       (unwind-protect
+            (loop for i below (fill-pointer (buf *xyz-200-02*))
+                  do (setf (cffi:mem-aref p :float i)
+                           (aref (buf *xyz-200-02*) i)))
+         (%gl:unmap-buffer :array-buffer)))
+     (gl:bind-vertex-array 0)
+     (gl:delete-buffers (list vbo))
+     (length (buf *xyz-200-02*)))))

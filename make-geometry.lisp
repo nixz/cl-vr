@@ -34,11 +34,19 @@
 
 (in-package #:cl-vr)
 
-(defparameter *buf* (make-array '(1024) 
+
+
+(defclass geometry ()
+  ((buf :initarg :buf
+         :initform (make-array '(1024) 
                                 :element-type 'single-float
                                 :fill-pointer 0
-                                :adjustable t))
-(defparameter *count* 0)
+                                :adjustable t)
+         :accessor buf
+         :documentation "the buffer"))
+  (:documentation "This is used to make different geometry objects"))
+
+
 ;; (defparameter *color*  (vector 0 0 0 1)) 
 ;; (defparameter *normal* (vector 1 0 0))
 
@@ -51,21 +59,21 @@
     (sb-cga:normalize (sb-cga:cross-product v1 v2))))
 
 ;;; ----------------------------------------------------------------------------
-(defun vertex (x y z &key (w 1)
-                       (color (vector 0 0 0 1)) 
-                       (normal (vector 1 0 0)))  
-  (loop for i in (list x y z w)
-   do (vector-push-extend (float i 0.0) *buf*))
-  (loop for i across color
-     do (vector-push-extend (float i 0.0) *buf*))
-  (loop for i across normal
-     do (vector-push-extend (float i 0.0) *buf*))
-  (incf *count*))
+(defmethod vertex ((obj geometry) x y z &key (w 1)
+                                          (color (vector 0 0 0 1)) 
+                                          (normal (vector 1 0 0)))
+  (with-slots (buf count) obj
+    (loop for i in (list x y z w)
+       do (vector-push-extend (float i 0.0) buf))
+    (loop for i across color
+       do (vector-push-extend (float i 0.0) buf))
+    (loop for i across normal
+       do (vector-push-extend (float i 0.0) buf))))
 
 ;;; ----------------------------------------------------------------------------
-(defun face (v1 v2 v3 &key (tx (sb-cga:identity-matrix)) 
-                        (normal (vector 1.0 .0 .0) normal-provided-p)  
-                        (color (vector .0 .0 .0 1.0)))
+(defmethod face ((obj geometry) v1 v2 v3 &key (tx (sb-cga:identity-matrix)) 
+                                           (normal (vector 1.0 .0 .0) normal-provided-p)  
+                                           (color (vector .0 .0 .0 1.0)))
   (let* ((normal (if normal-provided-p normal (norm v1 v2 v3)))
          (v1 (sb-cga:transform-point v1 tx))
          (v2 (sb-cga:transform-point v2 tx))
@@ -79,44 +87,44 @@
         (v3.x (aref v3 0))
         (v3.y (aref v3 1))
         (v3.z (aref v3 2)))
-    (vertex v1.x v1.y v1.z :normal normal :color color)
-    (vertex v2.x v2.y v2.z :normal normal :color color)
-    (vertex v3.x v3.y v3.z :normal normal :color color)))
+    (vertex obj v1.x v1.y v1.z :normal normal :color color)
+    (vertex obj v2.x v2.y v2.z :normal normal :color color)
+    (vertex obj v3.x v3.y v3.z :normal normal :color color)))
   
 ;;; ----------------------------------------------------------------------------
-(defun cube (x y z r &key (color (vector 0 0 0 1)))
-  (let* ((x (coerce x 'single-float))
-         (y (coerce y 'single-float))
-         (z (coerce z 'single-float))
-         (r (coerce r 'single-float))
-         (a (sb-cga:vec (- r) (- r) (- r)))
-         (b (sb-cga:vec (- r) (+ r) (- r)))
-         (c (sb-cga:vec (+ r) (+ r) (- r)))
-         (d (sb-cga:vec (+ r) (- r) (- r)))
-         (fpi (coerce pi 'single-float))
-         (normal nil))
-    (loop for m in (list (sb-cga:rotate* 0.0 0.0 0.0)
-                         (sb-cga:rotate* 0.0 (* fpi 1/2) 0.0)
-                         (sb-cga:rotate* 0.0 (* fpi 2/2) 0.0)
-                         (sb-cga:rotate* 0.0 (* fpi 3/2) 0.0)
-                         (sb-cga:rotate* (* fpi 1/2) 0.0 0.0)
-                         (sb-cga:rotate* (* fpi 3/2) 0.0 0.0))
-       do (let* ((n (sb-cga:transform-point
-                    (sb-cga:vec 0.0 0.0 1.0) m)))
-            (setf normal (vector (aref n 0) (aref n 1) (aref n 2))))
-        (flet ((v (v)
-                  (let ((v (sb-cga:transform-point v m)))
-                    (vertex (+ x (aref v 0))
-                            (+ y (aref v 1))
-                            (+ z (aref v 2)) 
-                            :normal normal
-                            :color color))))
-           (v a)
-           (v b)
-           (v c)
-           (v a)
-           (v c)
-           (v d)))))
+;; (defun cube (x y z r &key (color (vector 0 0 0 1)))
+;;   (let* ((x (coerce x 'single-float))
+;;          (y (coerce y 'single-float))
+;;          (z (coerce z 'single-float))
+;;          (r (coerce r 'single-float))
+;;          (a (sb-cga:vec (- r) (- r) (- r)))
+;;          (b (sb-cga:vec (- r) (+ r) (- r)))
+;;          (c (sb-cga:vec (+ r) (+ r) (- r)))
+;;          (d (sb-cga:vec (+ r) (- r) (- r)))
+;;          (fpi (coerce pi 'single-float))
+;;          (normal nil))
+;;     (loop for m in (list (sb-cga:rotate* 0.0 0.0 0.0)
+;;                          (sb-cga:rotate* 0.0 (* fpi 1/2) 0.0)
+;;                          (sb-cga:rotate* 0.0 (* fpi 2/2) 0.0)
+;;                          (sb-cga:rotate* 0.0 (* fpi 3/2) 0.0)
+;;                          (sb-cga:rotate* (* fpi 1/2) 0.0 0.0)
+;;                          (sb-cga:rotate* (* fpi 3/2) 0.0 0.0))
+;;        do (let* ((n (sb-cga:transform-point
+;;                     (sb-cga:vec 0.0 0.0 1.0) m)))
+;;             (setf normal (vector (aref n 0) (aref n 1) (aref n 2))))
+;;         (flet ((v (v)
+;;                   (let ((v (sb-cga:transform-point v m)))
+;;                     (vertex (+ x (aref v 0))
+;;                             (+ y (aref v 1))
+;;                             (+ z (aref v 2)) 
+;;                             :normal normal
+;;                             :color color))))
+;;            (v a)
+;;            (v b)
+;;            (v c)
+;;            (v a)
+;;            (v c)
+;;            (v d)))))
 
 
 ;; (defun skew-symmetric-cross-product (v)
@@ -136,7 +144,7 @@
     
 ;;     ))
 ;;; ----------------------------------------------------------------------------
-(defun cylinder (x1 y1 z1 x2 y2 z2 r &key (color (vector .28 .18 .14 1)))
+(defmethod cylinder ((obj geometry) x1 y1 z1 x2 y2 z2 r &key (color (vector .28 .18 .14 1)))
   (let* ((x1 (coerce x1 'single-float))
          (y1 (coerce y1 'single-float))
          (z1 (coerce z1 'single-float))
@@ -166,13 +174,13 @@
                             ))
          )
     (loop for i from 0 below (length tindices)
-       do (face (elt vdata (elt (elt tindices i) 0))
+       do (face obj (elt vdata (elt (elt tindices i) 0))
                   (elt vdata (elt (elt tindices i) 1))    
                   (elt vdata (elt (elt tindices i) 2))
                   :tx m :color color))))
 
 ;;; ----------------------------------------------------------------------------
-(defun sphere (x y z r &key (color (vector 1.0 .0 .0 1.0)))
+(defmethod sphere ((obj geometry) x y z r &key (color (vector 1.0 .0 .0 1.0)))
   (let* ((x (coerce x 'single-float))
          (y (coerce y 'single-float))
          (z (coerce z 'single-float))
@@ -181,13 +189,14 @@
          (tindices *sphere-indices*)
          (m (sb-cga:matrix* (sb-cga:translate* x y z) (sb-cga:scale* r r r))))
     (loop for i from 0 below (length tindices)
-       do (face (elt vdata (elt (elt tindices i) 0))
+       do (face obj
+                (elt vdata (elt (elt tindices i) 0))
                   (elt vdata (elt (elt tindices i) 1))    
                   (elt vdata (elt (elt tindices i) 2))
                   :tx m :color color))))
 
 ;;; ----------------------------------------------------------------------------
-(defun mesh (&key (color (vector 1.0 .5 .0 .5)))
+(defmethod mesh ((obj geometry) &key (color (vector 1.0 .5 .0 .5)))
   (let* ()
     (loop for i from 0 below (length *indices*)
        do (flet ((v (v)
@@ -195,13 +204,14 @@
                           (b (aref v 1))
                           (c (aref v 2))
                           )
-                     (vertex a b c                             
+                     (vertex obj
+                             a b c                             
                              :normal (vector 1 0 0)
                              :color color))))
             (let ((v1 (elt *vertices* (elt (elt *indices* i) 0)))
                   (v2 (elt *vertices* (elt (elt *indices* i) 1)))
                   (v3 (elt *vertices* (elt (elt *indices* i) 2))))
-              (face v1 v2 v3 :color color))))))
+              (face obj v1 v2 v3 :color color))))))
            ;; (v v1)
            ;; (v v2)
            ;; (v v3)))))
@@ -248,73 +258,66 @@
     obj))
 
 ;;; ---------------------------------------------------------------------------
-(defun build-checker-board (vao)
-  "build a checkerboard VAO and returns the vertex count"
-  (let ((*buf* (make-array '(1024) 
-                           :element-type 'single-float
-                           :fill-pointer 0
-                           :adjustable t))
-        (*count* 0)        
-        (color (vector 0 0 0 1)))
-    (labels ((color (r g b &optional (a 1))
-               (setf color (vector r g b a))))
-      ;; checkerboard ground
-      (loop for i from -8 below 8
-         do (loop for j from -8 below 8
-               for p = (oddp (+ i j))
-               do (if p
-                      (color 0.0 0.9 0.9 1.0)
-                      (color 0.1 0.1 0.1 1.0))
-                 (vertex i -0.66 j :color color)
-                 (vertex (1+ i) -0.66 j :color color)
-                 (vertex (1+ i) -0.66 (1+ j) :color color)
-                 (vertex i -0.66 j :color color)
-                 (vertex (1+ i) -0.66 (1+ j) :color color)
-                 (vertex i -0.66 (1+ j) :color color)))
-      (let ((vbo (gl:gen-buffer))
-            (stride (* 11 4)))
-        (gl:bind-buffer :array-buffer vbo)
-        (%gl:buffer-data :array-buffer (* *count* stride) (cffi:null-pointer)
-                         :static-draw)
-        (gl:bind-vertex-array vao)
-        (gl:enable-client-state :vertex-array)
-        (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
-        (gl:enable-client-state :normal-array)
-        (%gl:normal-pointer :float stride (* 8 4))
-        (gl:enable-client-state :color-array)
-        (%gl:color-pointer 4 :float stride (* 4 4))
-        (let ((p (%gl:map-buffer :array-buffer :write-only)))
-          (unwind-protect
-               (loop for i below (fill-pointer *buf*)
-                  do (setf (cffi:mem-aref p :float i)
-                           (aref *buf* i)))
-            (%gl:unmap-buffer :array-buffer)))
-        (gl:delete-buffers (list vbo))
-        )
-      (gl:bind-vertex-array 0)
-      *count*)))
+;; (defun build-checker-board (vao)
+;;   "build a checkerboard VAO and returns the vertex count"
+;;   (let ((*buf* (make-array '(1024) 
+;;                            :element-type 'single-float
+;;                            :fill-pointer 0
+;;                            :adjustable t))
+;;         (*count* 0)        
+;;         (color (vector 0 0 0 1)))
+;;     (labels ((color (r g b &optional (a 1))
+;;                (setf color (vector r g b a))))
+;;       ;; checkerboard ground
+;;       (loop for i from -8 below 8
+;;          do (loop for j from -8 below 8
+;;                for p = (oddp (+ i j))
+;;                do (if p
+;;                       (color 0.0 0.9 0.9 1.0)
+;;                       (color 0.1 0.1 0.1 1.0))
+;;                  (vertex i -0.66 j :color color)
+;;                  (vertex (1+ i) -0.66 j :color color)
+;;                  (vertex (1+ i) -0.66 (1+ j) :color color)
+;;                  (vertex i -0.66 j :color color)
+;;                  (vertex (1+ i) -0.66 (1+ j) :color color)
+;;                  (vertex i -0.66 (1+ j) :color color)))
+;;       (let ((vbo (gl:gen-buffer))
+;;             (stride (* 11 4)))
+;;         (gl:bind-buffer :array-buffer vbo)
+;;         (%gl:buffer-data :array-buffer (* *count* stride) (cffi:null-pointer)
+;;                          :static-draw)
+;;         (gl:bind-vertex-array vao)
+;;         (gl:enable-client-state :vertex-array)
+;;         (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
+;;         (gl:enable-client-state :normal-array)
+;;         (%gl:normal-pointer :float stride (* 8 4))
+;;         (gl:enable-client-state :color-array)
+;;         (%gl:color-pointer 4 :float stride (* 4 4))
+;;         (let ((p (%gl:map-buffer :array-buffer :write-only)))
+;;           (unwind-protect
+;;                (loop for i below (fill-pointer *buf*)
+;;                   do (setf (cffi:mem-aref p :float i)
+;;                            (aref *buf* i)))
+;;             (%gl:unmap-buffer :array-buffer)))
+;;         (gl:delete-buffers (list vbo))
+;;         )
+;;       (gl:bind-vertex-array 0)
+;;       *count*)))
 
 ;;; ---------------------------------------------------------------------------
-(defun build-world (vao)
+(defun build-mesh (vao)
   (let ((vbo (gl:gen-buffer))
-        (color (vector 0 0 0 1)))
+        (color (vector 0 0 0 1))
+        (geometry (make-instance 'geometry)))
    (labels ((color (r g b &optional (a 1))
               (setf color (vector r g b a))))
-     
-     (load "data/xyz200-1.lisp")
-     ;; (load "/home/nshetty/Downloads/mesh.lisp")
-     (mesh)
-     ;; and some random cubes
-     ;; (let ((*random-state* (make-random-state *random-state*))
-     ;;       (r 1000.0))
-     ;;   (flet ((r () (- (random r) (/ r 2))))
-     ;;     (loop for i below 5000
-     ;;           do (color (random 1.0) (+ 0.5 (random 0.5)) (random 1.0) 1.0)
-     ;;              (cube (+ 0.0 (r)) (- (r)) (+ 1.5 (r)) (+ 0.05 (random 0.10)))
-     ;;              (sphere (+ 0.0 (r)) (- (r)) (+ 1.5 (r)) (+ 0.05 (random 0.10))))))
+     ;; (load "data/xyz200-1.lisp")
+     (mesh geometry)
      (let ((stride (* 11 4)))
        (gl:bind-buffer :array-buffer vbo)
-       (%gl:buffer-data :array-buffer (* *count* stride) (cffi:null-pointer)
+       (%gl:buffer-data :array-buffer
+                        (* (length (buf geometry)) stride)
+                        (cffi:null-pointer)
                         :static-draw)
        (gl:bind-vertex-array vao)
        (gl:enable-client-state :vertex-array)
@@ -325,10 +328,40 @@
        (%gl:color-pointer 4 :float stride (* 4 4)))
      (let ((p (%gl:map-buffer :array-buffer :write-only)))
        (unwind-protect
-            (loop for i below (fill-pointer *buf*)
+            (loop for i below (fill-pointer (buf geometry))
                   do (setf (cffi:mem-aref p :float i)
-                           (aref *buf* i)))
+                           (aref (buf geometry) i)))
          (%gl:unmap-buffer :array-buffer)))
      (gl:bind-vertex-array 0)
      (gl:delete-buffers (list vbo))
-     *count*)))
+     (length (buf geometry)))))
+
+(defun build-xyz200-1 (vao)
+  (let ((vbo (gl:gen-buffer))
+        (color (vector 0 0 0 1)))
+   (labels ((color (r g b &optional (a 1))
+              (setf color (vector r g b a))))
+     (load "data/xyz200-1.lisp")
+     
+     (let ((stride (* 11 4)))
+       (gl:bind-buffer :array-buffer vbo)
+       (%gl:buffer-data :array-buffer
+                        (* (length (buf *xyz200-1*)) stride)
+                        (cffi:null-pointer)
+                        :static-draw)
+       (gl:bind-vertex-array vao)
+       (gl:enable-client-state :vertex-array)
+       (%gl:vertex-pointer 4 :float stride (cffi:null-pointer))
+       (gl:enable-client-state :normal-array)
+       (%gl:normal-pointer :float stride (* 8 4))
+       (gl:enable-client-state :color-array)
+       (%gl:color-pointer 4 :float stride (* 4 4)))
+     (let ((p (%gl:map-buffer :array-buffer :write-only)))
+       (unwind-protect
+            (loop for i below (fill-pointer (buf *xyz200-1*))
+                  do (setf (cffi:mem-aref p :float i)
+                           (aref (buf *xyz200-1*) i)))
+         (%gl:unmap-buffer :array-buffer)))
+     (gl:bind-vertex-array 0)
+     (gl:delete-buffers (list vbo))
+     (length (buf *xyz200-1*)))))

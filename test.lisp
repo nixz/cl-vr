@@ -357,10 +357,10 @@
                          (hud-vao win) (second *vaos*)
                          (xyz200-1-vao win) (third *vaos*)
                          (xyz200-1-count win) (build-xyz200-1 (third *vaos*))
-                         (xyz-200-01-vao win) (fourth *vaos*)
-                         (xyz-200-01-count win) (build-xyz-200-01 (fourth *vaos*))
-                         (xyz-200-02-vao win) (fifth *vaos*)
-                         (xyz-200-02-count win) (build-xyz-200-02 (fifth *vaos*))
+                         ;; (xyz-200-01-vao win) (fourth *vaos*)
+                         ;; (xyz-200-01-count win) (build-xyz-200-01 (fourth *vaos*))
+                         ;; (xyz-200-02-vao win) (fifth *vaos*)
+                         ;; (xyz-200-02-count win) (build-xyz-200-02 (fifth *vaos*))
                    
                          )
                    

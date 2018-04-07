@@ -30,7 +30,7 @@
 ;;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ;;;; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;; ==========================================================================
-(defsystem cl-vr
+(defsystem #:cl-vr
   :description "Defining the asdf system for cl-vr project"
   :depends-on (#:cl-opengl
                #:sb-bsd-sockets
